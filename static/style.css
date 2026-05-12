@@ -1,0 +1,109 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family: 'Poppins', sans-serif;
+}
+
+body{
+    font-family: 'Poppins', sans-serif;
+    min-height:100vh;
+    background-image: url("/static/images/salon-bg.png");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    margin: 0;
+    padding: 0;
+}
+
+.page-container {
+    width: 95%;
+    max-width: 1000px;
+    margin: 120px auto 60px auto; /* CENTERING FIX */
+    background: rgba(255,255,255,0.98);
+    padding: 40px;
+    border-radius: 20px;
+    box-shadow: 0 15px 40px rgba(0,0,0,0.15);
+    text-align: center;
+}
+/* Navbar */
+.navbar{
+    position:fixed;
+    top:0;
+    width:100%;
+    padding:20px 50px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    background:rgba(0,0,0,0.7);
+    z-index:1000;
+}
+
+.logo{
+    color:#00e676;
+    font-size:22px;
+    font-weight:700;
+}
+
+.nav-links a{
+    color:white;
+    text-decoration:none;
+    margin-left:25px;
+}
+
+.nav-links a:hover{
+    color:#00e676;
+}
+
+/* Center container */
+.container{
+    margin-top:150px;
+    background: rgba(255,255,255,0.95);
+    padding:50px;
+    border-radius:20px;
+    text-align:center;
+    width:90%;
+    max-width:700px;
+    box-shadow:0 10px 40px rgba(0,0,0,0.3);
+}
+
+/* Large page container */
+.page-container{
+    width:95%;
+    max-width:1200px;
+    margin:120px auto 50px auto;
+    background: rgba(255,255,255,0.97);
+    padding:40px;
+    border-radius:20px;
+    box-shadow:0 10px 40px rgba(0,0,0,0.3);
+}
+
+/* Buttons */
+.btn{
+    padding:14px 30px;
+    margin:15px;
+    border:none;
+    border-radius:30px;
+    background:linear-gradient(45deg,#00c853,#64dd17);
+    color:white;
+    font-weight:600;
+    cursor:pointer;
+    transition:0.3s;
+}
+
+.btn:hover{
+    transform:scale(1.05);
+}
+.camera-section {
+    background: #f4f4f4;
+    border-radius: 12px;
+    padding: 30px;
+    margin: 0 auto 40px auto;
+    max-width: 600px;   /* Keeps camera centered */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}

@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Women Hairstyles</title>
+    <style>
+        .recommendation-card ol {
+        text-align: left;
+        padding-left: 20px;
+        margin-top: 10px;
+}
+
+.recommendation-card ol li {
+    background: #f1f5f9;
+    margin-bottom: 8px;
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-size: 14px;
+    line-height: 1.5;
+    transition: 0.3s ease;
+}
+
+.recommendation-card ol li:hover {
+    background: #e2e8f0;
+    transform: translateX(5px);
+}
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: #f8f9fa;
+            margin: 0;
+            padding:0;
+        }
+
+       .container {
+            width: 95%;
+            max-width: 1200px;
+            margin: 120px auto 60px auto;   /* Centers horizontally */
+            background: rgba(255,255,255,0.95);
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        }
+
+        h1 {
+            color: #2d3748;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.2rem;
+        }
+
+        .video-container {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            margin: 15px 0;
+        }
+
+        #video {
+            width: 480px;
+            height: 360px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        #canvas {
+            display: none;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center; /* Center the buttons */
+            margin-top: 20px;
+            width: 100%;
+        }
+
+    /* Universal Button Style (Same as Welcome Page) */
+button {
+    padding: 14px 30px;
+    margin: 15px;
+    border: none;
+    border-radius: 30px;
+    background: linear-gradient(45deg,#00c853,#64dd17);
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+button:hover {
+    transform: scale(1.05);
+}
+/* Center buttons properly */
+.action-buttons {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+    margin-top: 20px;
+}
+        #previewImage {
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            margin: 20px 0;
+            max-width: 480px;
+            max-height: 360px;
+        }
+
+        .recommendations {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 30px;
+            margin-top: 40px;
+        }
+
+        .recommendation-card {
+            background: white;
+            border-radius: 10px;
+            padding: 15px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+            text-align: center;
+        }
+
+        .recommendation-card img {
+            width: 100%;
+            height: 700px; /* Increased image height */
+            object-fit: cover;
+            border-radius: 8px;
+            margin-bottom: 10px;
+        }
+
+        #result {
+            text-align: center;
+            margin: 20px 0;
+            font-size: 1.2rem;
+            color: #2d3748;
+        }
+        /* Suggestion Section */
+.suggestion-section {
+    margin-top: 50px;
+    padding: 30px;
+    background: linear-gradient(135deg, #fdfbfb, #ebedee);
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    text-align: center;
+}
+
+.suggestion-section h2 {
+    margin-bottom: 20px;
+    font-size: 1.8rem;
+    color: #2d3748;
+}
+
+.suggestion-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+}
+
+.suggestion-images {
+    display: flex;
+    gap: 15px;
+}
+
+.suggestion-images img {
+    width: 200px;
+    height: 260px;
+    object-fit: cover;
+    border-radius: 15px;
+    transition: 0.4s ease;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+}
+
+.suggestion-images img:hover {
+    transform: scale(1.05);
+}
+
+.swipe-btn {
+    background: #007bff;
+    color: white;
+    border: none;
+    padding: 12px 18px;
+    font-size: 20px;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: 0.3s ease;
+}
+
+.swipe-btn:hover {
+    background: #0056b3;
+    transform: scale(1.1);
+}
+    </style>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="navbar">
+        <div class="logo">AI Hair Studio</div>
+        <div class="nav-links">
+            <a href="/index">Home</a>
+        </div>
+    </div>
+    <div class="container">
+        <h1>Women Hairstyles</h1>
+        <div class="camera-section">
+            <div class="video-container">
+                <video id="video" width="480" height="360" autoplay style="display:none;"></video>
+            </div>
+            <canvas id="canvas" width="480" height="360"></canvas>
+            <img id="previewImage" style="display: none;">
+            <div class="action-buttons">
+                <button id="captureButton">Capture Image</button>
+                <button id="uploadButton">Upload Image</button>
+            </div>
+            <input type="file" id="imageUpload" accept="image/*" style="display:none;">
+        </div>
+        <div id="result"></div>
+        <div id="recommendations"></div>
+    </div>
+    <!-- Suggestion Section -->
+<!-- Suggestion Section -->
+<div class="suggestion-section" id="suggestionSection" style="display:none;">
+    <h2>✨ Explore More Hairstyles</h2>
+
+    <div class="suggestion-container">
+        <button class="swipe-btn" onclick="previousSuggestion()">❮</button>
+
+        <div class="suggestion-images">
+            <img id="suggestionImage1">
+            <img id="suggestionImage2">
+            <img id="suggestionImage3">
+        </div>
+
+        <button class="swipe-btn" onclick="nextSuggestion()">❯</button>
+    </div>
+</div>
+    <script>
+        const video = document.getElementById('video');
+        const canvas = document.getElementById('canvas');
+        const context = canvas.getContext('2d');
+        let stream;
+
+        // Capture Image Button
+        document.getElementById('captureButton').addEventListener('click', async function() {
+            if (!stream) {
+                try {
+                    stream = await navigator.mediaDevices.getUserMedia({ video: true });
+                    video.srcObject = stream;
+                    video.style.display = 'block';
+                    document.getElementById('captureButton').textContent = 'Snap Photo';
+                    document.getElementById('uploadButton').style.display = 'none';
+                } catch (err) {
+                    console.error('Error accessing camera:', err);
+                    alert("Unable to access camera.");
+                    return;
+                }
+            } else {
+                context.drawImage(video, 0, 0, canvas.width, canvas.height);
+                const imageDataUrl = canvas.toDataURL('image/jpeg',0.6);
+                processImage(imageDataUrl);
+                video.style.display = 'none';
+                document.getElementById('captureButton').textContent = 'Capture Image';
+                document.getElementById('uploadButton').style.display = 'block';
+                stream.getTracks().forEach(track => track.stop());
+                stream = null;
+            }
+        });
+
+        // Upload Image Button
+        document.getElementById('uploadButton').addEventListener('click', function() {
+            document.getElementById('imageUpload').click();
+        });
+
+        // Handle Image Upload
+        document.getElementById('imageUpload').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    processImage(event.target.result);
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // Process Image and Fetch Recommendations
+        function processImage(imageData) {
+            const resizedCanvas = document.createElement("canvas");
+            const resizedContext = resizedCanvas.getContext("2d");
+
+            resizedCanvas.width = 320;
+            resizedCanvas.height = 240;
+
+            resizedContext.drawImage(canvas, 0, 0, 320, 240);
+
+            const imageDataUrl = resizedCanvas.toDataURL("image/jpeg", 0.6);
+            const previewImage = document.getElementById('previewImage');
+            previewImage.src = imageData;
+            previewImage.style.display = 'block';
+
+            fetch('/process_image', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: new URLSearchParams({ 'image': imageData, 'gender': 'women' })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                      document.getElementById('result').textContent = data.error;
+                      return;
+                 }
+
+            // Show Face + Hair Details
+            document.getElementById('result').innerHTML = `
+                <strong>Face Shape:</strong> ${data.face_shape}<br>
+                <strong>Hair Density:</strong> ${data.hair_density}<br>
+                <strong>Hair Type:</strong> ${data.hair_type}
+            `;
+
+            // Show Recommendations
+            let recommendationsHtml = '<div class="recommendations">';
+            data.recommendations.forEach(recommendation => {
+
+            // Split procedure into steps
+            let steps = recommendation.procedure
+                .split(/\d+\.\s/)
+                .filter(step => step.trim() !== '');
+
+            // Convert to ordered list
+            let stepsHtml = '<ol>';
+            steps.forEach(step => {
+                stepsHtml += `<li>${step.trim()}</li>`;
+            });
+            stepsHtml += '</ol>';
+
+            // Add recommendation card
+            recommendationsHtml += `
+                <div class="recommendation-card">
+                    <img src="${recommendation.img}" alt="${recommendation.name}">
+                    <h4>${recommendation.name}</h4>
+                    ${stepsHtml}
+                </div>
+            `;
+        });
+    recommendationsHtml += '</div>';
+    document.getElementById('recommendations').innerHTML = recommendationsHtml;
+    showSuggestionSection();
+        })
+            .catch(error => {
+                console.error('Error:', error);
+                document.getElementById('result').textContent = 'Error processing image.';
+            });
+        }
+    const hairstyleSuggestions = [
+        "https://i.pinimg.com/736x/e8/a2/d8/e8a2d8b67bd0ae270502a65ddb2baaaa.jpg",
+        "https://i.pinimg.com/736x/d5/82/5e/d5825ec732c450321c50d25bf6a0da43.jpg",
+        "https://i.pinimg.com/736x/a1/bc/17/a1bc17ff4d4efc68b14914f5199b36ca.jpg",
+        "https://i.pinimg.com/736x/47/ff/26/47ff26597383773eec73f081de5786d7.jpg",
+        "https://i.pinimg.com/736x/15/d6/5d/15d65d3879bd1e2a09fcbfbbc76f114c.jpg"
+    ];
+    function loadRandomSuggestions() {
+        const shuffled = hairstyleSuggestions.sort(() => 0.5 - Math.random());
+        document.getElementById("suggestionImage1").src = shuffled[0];
+        document.getElementById("suggestionImage2").src = shuffled[1];
+        document.getElementById("suggestionImage3").src = shuffled[2];
+    }
+
+    function nextSuggestion() {
+        loadRandomSuggestions();
+    }
+
+    function previousSuggestion() {
+        loadRandomSuggestions();
+    }
+
+    function showSuggestionSection() {
+        const suggestion = document.getElementById("suggestionSection");
+        suggestion.style.display = "block";
+        suggestion.style.opacity = "0";
+
+        setTimeout(() => {
+            suggestion.style.transition = "0.6s ease";
+            suggestion.style.opacity = "1";
+        }, 100);
+
+    loadRandomSuggestions();
+}
+    window.onload = loadRandomSuggestions;
+    </script>
+</body>
+</html>
