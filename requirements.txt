@@ -2,5 +2,5 @@ flask
 opencv-python-headless
 numpy
 pillow
-mediapipe==0.10.9
+mediapipe==0.10.35
 gunicorn
