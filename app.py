@@ -1,15 +1,14 @@
 from flask import Flask, render_template, request, jsonify
 import cv2
-import mediapipe as mp
 import numpy as np
 import base64
 from PIL import Image
 import io
+from mediapipe.python.solutions import face_mesh as mp_face_mesh
 
 app = Flask(__name__)
 
 # Initialize MediaPipe Face Mesh
-mp_face_mesh = mp.solutions.face_mesh
 face_mesh = mp_face_mesh.FaceMesh(
     static_image_mode=True,
     max_num_faces=1,
