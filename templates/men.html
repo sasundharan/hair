@@ -286,49 +286,56 @@ button:hover {
         });
 
         // Process Image and Fetch Recommendations
-        function processImage(imageData) {
-            const previewImage = document.getElementById('previewImage');
-            previewImage.src = imageData;
-            previewImage.style.display = 'block';
+       function processImage(imageData) {
+    const previewImage = document.getElementById('previewImage');
 
-            fetch('/process_image', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                },
-                body: new URLSearchParams({ 'image': imageData, 'gender': 'men' })
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.error) {
-                      document.getElementById('result').textContent = data.error;
-                      return;
-                 }
+    // Show preview
+    previewImage.src = imageData;
+    previewImage.style.display = 'block';
 
-            // Show Face + Hair Details
-            document.getElementById('result').innerHTML = `
-                <strong>Face Shape:</strong> ${data.face_shape}<br>
-                <strong>Hair Density:</strong> ${data.hair_density}<br>
-                <strong>Hair Type:</strong> ${data.hair_type}
-            `;
+    // Send image directly to Flask backend
+    fetch('/process_image', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: new URLSearchParams({
+            'image': imageData,
+            'gender': window.location.pathname.includes("women") ? 'women' : 'men'
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
 
-            // Show Recommendations
-            let recommendationsHtml = '<div class="recommendations">';
-                data.recommendations.forEach(recommendation => {
+        if (data.error) {
+            document.getElementById('result').textContent = data.error;
+            return;
+        }
 
-            // Split procedure into steps
+        // Face Details
+        document.getElementById('result').innerHTML = `
+            <strong>Face Shape:</strong> ${data.face_shape}<br>
+            <strong>Hair Density:</strong> ${data.hair_density}<br>
+            <strong>Hair Type:</strong> ${data.hair_type}
+        `;
+
+        // Recommendations
+        let recommendationsHtml = '<div class="recommendations">';
+
+        data.recommendations.forEach(recommendation => {
+
             let steps = recommendation.procedure
-            .split(/\d+\.\s/)
-            .filter(step => step.trim() !== '');
+                .split(/\d+\.\s/)
+                .filter(step => step.trim() !== '');
 
-            // Convert to ordered list
             let stepsHtml = '<ol>';
+
             steps.forEach(step => {
                 stepsHtml += `<li>${step.trim()}</li>`;
             });
+
             stepsHtml += '</ol>';
 
-            // Add recommendation card
             recommendationsHtml += `
                 <div class="recommendation-card">
                     <img src="${recommendation.img}" alt="${recommendation.name}">
@@ -337,15 +344,18 @@ button:hover {
                 </div>
             `;
         });
-    recommendationsHtml += '</div>';
-    document.getElementById('recommendations').innerHTML = recommendationsHtml;
-    showSuggestionSection();
-        })
-            .catch(error => {
-                console.error('Error:', error);
-                document.getElementById('result').textContent = 'Error processing image.';
-            });
-        }
+
+        recommendationsHtml += '</div>';
+
+        document.getElementById('recommendations').innerHTML = recommendationsHtml;
+
+        showSuggestionSection();
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        document.getElementById('result').textContent = 'Error processing image.';
+    });
+}
         const hairstyleSuggestions = [
             "https://i.pinimg.com/736x/c1/3c/d4/c13cd4b116dcb71e324e04ddae3ceaf5.jpg",
             "https://i.pinimg.com/736x/b6/77/82/b67782e2887c3cdd90b4d704324e2b42.jpg",
