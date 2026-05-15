@@ -283,58 +283,56 @@ button:hover {
         });
 
         // Process Image and Fetch Recommendations
-        function processImage(imageData) {
-            const resizedCanvas = document.createElement("canvas");
-            const resizedContext = resizedCanvas.getContext("2d");
+function processImage(imageData) {
+    const previewImage = document.getElementById('previewImage');
 
-            resizedCanvas.width = 320;
-            resizedCanvas.height = 240;
+    // Show preview
+    previewImage.src = imageData;
+    previewImage.style.display = 'block';
 
-            resizedContext.drawImage(canvas, 0, 0, 320, 240);
+    // Send image directly to Flask backend
+    fetch('/process_image', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: new URLSearchParams({
+            'image': imageData,
+            'gender': window.location.pathname.includes("women") ? 'women' : 'men'
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
 
-            const imageDataUrl = resizedCanvas.toDataURL("image/jpeg", 0.6);
-            const previewImage = document.getElementById('previewImage');
-            previewImage.src = imageData;
-            previewImage.style.display = 'block';
+        if (data.error) {
+            document.getElementById('result').textContent = data.error;
+            return;
+        }
 
-            fetch('/process_image', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                },
-                body: new URLSearchParams({ 'image': imageData, 'gender': 'women' })
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.error) {
-                      document.getElementById('result').textContent = data.error;
-                      return;
-                 }
+        // Face Details
+        document.getElementById('result').innerHTML = `
+            <strong>Face Shape:</strong> ${data.face_shape}<br>
+            <strong>Hair Density:</strong> ${data.hair_density}<br>
+            <strong>Hair Type:</strong> ${data.hair_type}
+        `;
 
-            // Show Face + Hair Details
-            document.getElementById('result').innerHTML = `
-                <strong>Face Shape:</strong> ${data.face_shape}<br>
-                <strong>Hair Density:</strong> ${data.hair_density}<br>
-                <strong>Hair Type:</strong> ${data.hair_type}
-            `;
+        // Recommendations
+        let recommendationsHtml = '<div class="recommendations">';
 
-            // Show Recommendations
-            let recommendationsHtml = '<div class="recommendations">';
-            data.recommendations.forEach(recommendation => {
+        data.recommendations.forEach(recommendation => {
 
-            // Split procedure into steps
             let steps = recommendation.procedure
                 .split(/\d+\.\s/)
                 .filter(step => step.trim() !== '');
 
-            // Convert to ordered list
             let stepsHtml = '<ol>';
+
             steps.forEach(step => {
                 stepsHtml += `<li>${step.trim()}</li>`;
             });
+
             stepsHtml += '</ol>';
 
-            // Add recommendation card
             recommendationsHtml += `
                 <div class="recommendation-card">
                     <img src="${recommendation.img}" alt="${recommendation.name}">
@@ -343,16 +341,19 @@ button:hover {
                 </div>
             `;
         });
-    recommendationsHtml += '</div>';
-    document.getElementById('recommendations').innerHTML = recommendationsHtml;
-    showSuggestionSection();
-        })
-            .catch(error => {
-                console.error('Error:', error);
-                document.getElementById('result').textContent = 'Error processing image.';
-            });
-        }
-    const hairstyleSuggestions = [
+
+        recommendationsHtml += '</div>';
+
+        document.getElementById('recommendations').innerHTML = recommendationsHtml;
+
+        showSuggestionSection();
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        document.getElementById('result').textContent = 'Error processing image.';
+    });
+}
+        const hairstyleSuggestions = [
         "https://i.pinimg.com/736x/e8/a2/d8/e8a2d8b67bd0ae270502a65ddb2baaaa.jpg",
         "https://i.pinimg.com/736x/d5/82/5e/d5825ec732c450321c50d25bf6a0da43.jpg",
         "https://i.pinimg.com/736x/a1/bc/17/a1bc17ff4d4efc68b14914f5199b36ca.jpg",
